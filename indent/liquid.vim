@@ -40,6 +40,23 @@ function! s:count(string,pattern)
 endfunction
 
 function! GetLiquidIndent(...)
+  let prev_lnum = prevnonblank(v:lnum-1)
+  let prev_line = getline(prev_lnum)
+  let prev_prev_lnum = prevnonblank(prev_lnum-1)
+  let prev_prev_line = getline(prev_prev_lnum)
+
+  if match(prev_line, '^\s*{%[^}]*$') != -1
+    let ind = indent(prev_lnum)
+
+    return ind + shiftwidth()
+  endif
+
+  if match(prev_prev_line, '^\s*{%[^}]*$') != -1
+    let ind = indent(prev_prev_lnum)
+
+    return ind + shiftwidth()
+  endif
+
   if a:0 && a:1 == '.'
     let v:lnum = line('.')
   elseif a:0 && a:1 =~ '^\d'
